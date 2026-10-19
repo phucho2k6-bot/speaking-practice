@@ -1,234 +1,233 @@
+import random
 import streamlit as st
 
-st.set_page_config(page_title="Luyện thi Speaking - Part 1", layout="centered")
+# ==========================================
+# DỮ LIỆU CÂU HỎI PART 1 & PART 2
+# ==========================================
 
-st.title("🎯 Luyện thi Speaking English - Part 1")
-st.caption("Gõ câu trả lời của bạn và bấm Check Answer để kiểm tra lỗi.")
-
-# Danh sách 30 câu hỏi
-questions = [
-    {
-        "id": 1,
-        "question": "Where are you from? Can you tell me something about your hometown? How often do you visit your grandparents?",
-        "corrections": "• **vitsit** ➔ **visit** (Lỗi chính tả)\n• **moth** ➔ **month** (Lỗi chính tả: 'moth' nghĩa là con bướm đêm)\n• **It is** ➔ **it is** (Chữ 'I' không cần viết hoa sau dấu phẩy)",
-        "ideal_ans": "I come from Da Nang. It is a nice city with many clean beaches. I visit my grandparents once a month because they live far away."
-    },
-    {
-        "id": 2,
-        "question": "What is your favorite outdoor activity? Where do you play it and with whom?",
-        "corrections": "• **at park** ➔ **at the park** (Thiếu mạo từ 'the')",
-        "ideal_ans": "I like playing football. I usually play it at the park near my house with my friends."
-    },
-    {
-        "id": 3,
-        "question": "Do you play sports? How often do you play? What are the benefits of playing sports?",
-        "corrections": "• **Yes,.** ➔ **Yes,** (Thừa dấu chấm)\n• **two time** ➔ **two times** (Danh từ số nhiều)\n• **It help** ➔ **It helps** (Chia động từ số ít)",
-        "ideal_ans": "Yes, I play sports two times a week. It helps me stay healthy and feel relaxed after school."
-    },
-    {
-        "id": 4,
-        "question": "What do you usually wear to class? Why?",
-        "corrections": "• **Tốt!** Không có lỗi ngữ pháp nghiêm trọng.",
-        "ideal_ans": "I usually wear a T-shirt and jeans to class. I wear them because they are simple and comfortable."
-    },
-    {
-        "id": 5,
-        "question": "What do you usually do in your free time?",
-        "corrections": "• **tivi** ➔ **TV** hoặc **television** (Từ chuẩn tiếng Anh)\n• **learn Japanese** ➔ **study Japanese** (Tự nhiên hơn)",
-        "ideal_ans": "In my free time, I often watch TV or study Japanese."
-    },
-    {
-        "id": 6,
-        "question": "What do you usually do on weekends? What did you do last weekend?",
-        "corrections": "• **learn more** ➔ **study**\n• **Last week** ➔ **Last weekend**",
-        "ideal_ans": "On weekends, I usually study English or Japanese. Last weekend, I went to the beach with my friends."
-    },
-    {
-        "id": 7,
-        "question": "How many seasons are there in a year? What do you usually do in spring?",
-        "corrections": "• **Tốt!** Câu trả lời chính xác.",
-        "ideal_ans": "There are four seasons in my country. In spring, I usually clean the house to celebrate Tet."
-    },
-    {
-        "id": 8,
-        "question": "Are there any festivals in your country? What do you usually do then?",
-        "corrections": "• **holiday, When** ➔ **holiday. When**\n• **it come** ➔ **it comes**\n• **wish Tet** ➔ **give Tet wishes to my relatives**",
-        "ideal_ans": "Yes, we have Tet holiday. When it comes, I often visit my relatives to give Tet wishes and go to temples."
-    },
-    {
-        "id": 9,
-        "question": "What do you usually do during summer vacation? What did you do last summer?",
-        "corrections": "• **park-time** ➔ **part-time** (Lỗi chính tả)",
-        "ideal_ans": "In summer, I often work part-time and help my family. Last summer, I went to the beach with my friends."
-    },
-    {
-        "id": 10,
-        "question": "Do you like watching movies? What type of movie do you like? What is your favorite film and what is it about?",
-        "corrections": "• **like movie** ➔ **like movies** (Số nhiều)\n• **very fun** ➔ **very funny**",
-        "ideal_ans": "Yes, I like movies. My favorite type is comedy. My favorite film is \"Làm giàu với ma\" because it is very funny. It tells about the journey of bringing Na's soul home."
-    },
-    {
-        "id": 11,
-        "question": "Is science and technology necessary for your life? Can you tell me the advantages and disadvantages of technology in our lives?",
-        "corrections": "• **it necessary** ➔ **it is necessary** (Thiếu tobe 'is')",
-        "ideal_ans": "Yes, it is necessary for my life. It makes our lives easier, but it also makes us lazy."
-    },
-    {
-        "id": 12,
-        "question": "Where do you study? What is your major? Why did you choose it?",
-        "corrections": "• **I choose** ➔ **I chose** (Quá khứ)\n• **I good at** ➔ **I am good at** (Thiếu tobe 'am')",
-        "ideal_ans": "I study at university. My major is Chemical engineering. I chose it because I am good at chemistry and theory."
-    },
-    {
-        "id": 13,
-        "question": "What was your favorite subject in high school? Why?",
-        "corrections": "• **I like it** ➔ **I liked it** (Thì quá khứ)",
-        "ideal_ans": "My favorite subject in high school was chemistry. I liked it because it was fun and very interesting."
-    },
-    {
-        "id": 14,
-        "question": "Where do you live? How far is it from school? How do you get to school? Do you take public transport?",
-        "corrections": "• **because i'm** ➔ **because I'm** (Viết hoa chữ 'I')",
-        "ideal_ans": "I live at K144/60 Nguyen Luong Bang Street. It's about 1km from my school. I walk to school and I don't usually take the bus because I live close by."
-    },
-    {
-        "id": 15,
-        "question": "Who are you closest to in your family? Why? Do you spend much time with them?",
-        "corrections": "• **she talk** ➔ **she talks** (Chia động từ số ít)",
-        "ideal_ans": "I'm closest to my mother because she talks to me the most and is very caring. Yes, I spend a lot of time with my mom and help her with household chores every day."
-    },
-    {
-        "id": 16,
-        "question": "Which room in your house do you like best? Why?",
-        "corrections": "• **Tốt!** Chuẩn cấu trúc.",
-        "ideal_ans": "My favorite room is my bedroom because it is quiet and I can rest well there."
-    },
-    {
-        "id": 17,
-        "question": "When is your birthday? What do you usually do on your birthday?",
-        "corrections": "• **is December 11th** ➔ **is on December 11th** (Thiếu 'on')",
-        "ideal_ans": "My birthday is on December 11th. I usually eat cake with my friends and get gifts and birthday wishes."
-    },
-    {
-        "id": 18,
-        "question": "Do you often use a computer? What are the advantages and disadvantages of using a computer?",
-        "corrections": "• **Tốt!** Tự nhiên và chính xác.",
-        "ideal_ans": "Yes, I use a computer every day. It is good for finding information, but bad because it makes my eyes tired."
-    },
-    {
-        "id": 19,
-        "question": "What do you usually do in the evening? Should we spend evenings with family?",
-        "corrections": "• **listen music** ➔ **listen to music**\n• **Yes, We** ➔ **Yes, we**\n• **because to talk** ➔ **to talk**",
-        "ideal_ans": "In the evening, I do homework and listen to music. Yes, we should spend evenings with our family to talk and relax together."
-    },
-    {
-        "id": 20,
-        "question": "Do you often keep in touch with your best friend? How? What do you do together?",
-        "corrections": "• **i rarely** ➔ **I rarely** (Viết hoa 'I')\n• **messenger** ➔ **Messenger**",
-        "ideal_ans": "No, I rarely contact my friends. When I do, I contact them via Messenger and we often go out."
-    },
-    {
-        "id": 21,
-        "question": "Who usually cooks in your family? Do you cook? Why?",
-        "corrections": "• **Tốt!** Đúng cấu trúc.",
-        "ideal_ans": "My mother cooks in my family. I also cook sometimes because I want to help my mother."
-    },
-    {
-        "id": 22,
-        "question": "What is your favorite dish? How is it made?",
-        "corrections": "• **salad** ➔ **vegetables**",
-        "ideal_ans": "My favorite dish is fried rice. It is made with rice, eggs, vegetables, and meat."
-    },
-    {
-        "id": 23,
-        "question": "What is your hobby? How much time do you spend on it?",
-        "corrections": "• **Tốt!** Đúng trọng tâm.",
-        "ideal_ans": "My hobby is playing games. I spend about one hour a day on my hobby."
-    },
-    {
-        "id": 24,
-        "question": "Do you live in a house or an apartment? Which do you prefer? What would you like to change in your home?",
-        "corrections": "• **wanna** ➔ **want to**",
-        "ideal_ans": "I live in an apartment, but I like a house more because it is bigger. I want to add more plants to my home."
-    },
-    {
-        "id": 25,
-        "question": "Do you often ride a bicycle? At what age did you learn? Do many people ride bikes in your country? Why is cycling encouraged?",
-        "corrections": "• **7 year old** ➔ **7 years old**\n• **clean for the air** ➔ **good for the environment**",
-        "ideal_ans": "I do not ride a bike now, but I learned when I was 7 years old. In my country, many people ride bicycles because it is convenient. Cycling is recommended because it is healthy and good for the environment."
-    },
-    {
-        "id": 26,
-        "question": "Do you like traveling? When was the last time you traveled? Where did you go and what did you do?",
-        "corrections": "• **moths** ➔ **months** (Lỗi chính tả)",
-        "ideal_ans": "Yes, I love traveling. The last time I traveled was 4 months ago. I went to the Imperial City of Hue and visited historical monuments."
-    },
-    {
-        "id": 27,
-        "question": "How many languages can you speak? Do you like learning a new language? Why?",
-        "corrections": "• **two language** ➔ **two languages** (Số nhiều)",
-        "ideal_ans": "I can speak two languages: English and Japanese. I like learning a new language, but only if it is work-related."
-    },
-    {
-        "id": 28,
-        "question": "When did you start learning a foreign language? How can someone learn a foreign language well?",
-        "corrections": "• **expose it daily** ➔ **practice it daily**",
-        "ideal_ans": "I started learning English in primary school. To learn well, you should practice it daily."
-    },
-    {
-        "id": 29,
-        "question": "What is your favorite type of music? How much time do you spend listening to music? Who is your favorite singer?",
-        "corrections": "• **two hour** ➔ **two hours**\n• **listen for** ➔ **listen to music for**",
-        "ideal_ans": "I like pop music. I listen to music for two hours every day when I study. My favorite singer is MCK."
-    },
-    {
-        "id": 30,
-        "question": "Do you often go shopping? Who usually buys groceries in your home? Do you prefer online or in-store shopping?",
-        "corrections": "• **pefer** ➔ **prefer** (Lỗi chính tả)",
-        "ideal_ans": "I don't often go shopping. My mom usually buys groceries. I prefer online shopping because it is cheaper and more convenient."
-    }
+PART1_QUESTIONS = [
+    # Work / Study
+    "Do you work or are you a student?",
+    "What subject are you studying or what is your job?",
+    "Why did you choose that subject or job?",
+    "Do you enjoy your studies or your work?",
+    # Hometown
+    "Where is your hometown?",
+    "What do you like most about your hometown?",
+    "Is there anything you dislike about your hometown?",
+    "Has your hometown changed much in recent years?",
+    # Accommodation
+    "Do you live in a house or an apartment?",
+    "What is your favorite room in your home?",
+    "What would you like to change about your home?",
+    "How long have you lived there?",
+    # Free time
+    "What do you usually do in your spare time?",
+    "Do you prefer spending your free time indoors or outdoors?",
+    "Did you have any different hobbies when you were a child?",
+    "Do you think hobbies should be shared with other people?",
+    # Music
+    "What kind of music do you like to listen to?",
+    "How often do you listen to music?",
+    "Did you listen to the same type of music when you were younger?",
+    "Have you ever been to a live concert?",
+    # Daily Routine
+    "What is your daily routine?",
+    "Which part of the day do you like best?",
+    "Do you usually plan your time every day?",
+    "What is the busiest time of the day for you?",
+    # Friends
+    "Do you prefer to spend time alone or with friends?",
+    "What do you usually do with your friends?",
+    "How do you keep in touch with your close friends?",
+    "Is making new friends easy for you?",
 ]
 
-# Quản lý trạng thái câu hỏi hiện tại
-if "q_index" not in st.session_state:
-    st.session_state.q_index = 0
+PART2_DATA = [
+    {
+        "topic": "1. A sports match you watched",
+        "question": """Describe a live sports match you watched.
+You should say:
+• What match it was
+• Where and when you watched it
+• What happened during the match
+And explain how you felt after watching it.""",
+        "ideal_answer": "I watched a live football match between Vietnam and Thailand last year at a stadium. The atmosphere was very exciting because many fans cheered loudly. I liked it the most when Vietnam scored a goal in the last few minutes. Everyone was happy and shouted with joy. After watching the match, I felt excited and proud of my country. It was an unforgettable experience for me.",
+    },
+    {
+        "topic": "2. Your favorite sport",
+        "question": """Describe your favorite sport.
+You should say:
+• What sport it is
+• How often and with whom you play it
+• What equipment is needed
+And explain why this is your favorite sport.""",
+        "ideal_answer": "My favorite sport is football. I usually play it with my friends twice a week and watch football matches on TV at weekends. To play football, we need a ball, sports shoes and comfortable clothes. I love this sport because it is fun and helps me stay healthy. It also teaches me teamwork and helps me make more friends. That is why football is my favorite sport.",
+    },
+    {
+        "topic": "3. A healthy lifestyle you know",
+        "question": """Describe a healthy lifestyle you know about.
+You should say:
+• What kind of lifestyle it is
+• How you learned about it
+• What activities are involved
+And explain why you think this lifestyle is healthy.""",
+        "ideal_answer": "A healthy lifestyle I know is doing exercise regularly. I learned about it from my parents, teachers and the internet. I usually exercise in the morning or play sports with my friends in the afternoon. I think this lifestyle is healthy because it helps me become stronger and feel happier. It also helps me reduce stress and sleep better. I believe everyone should exercise regularly to stay healthy.",
+    },
+    {
+        "topic": "4. A time you were sick",
+        "question": """Describe a time when you were sick.
+You should say:
+• What illness you had and when it was
+• Why you got sick
+• What you did to recover
+And explain how this experience affected you.""",
+        "ideal_answer": "Last year, I had a bad cold. I got sick because I stayed up late and did not get enough rest. I had a headache and a runny nose, so I felt very tired. To get better, I took medicine, drank warm water and slept more. After a few days, I felt much better. This experience taught me to take better care of my health.",
+    },
+    {
+        "topic": "5. Your favorite method of transport",
+        "question": """Describe your favorite mode of transport.
+You should say:
+• What mode of transport it is
+• How often you use it
+• Why it is popular in your country
+And explain why you prefer this mode of transport.""",
+        "ideal_answer": "My favorite method of transport is the motorbike. I use it almost every day to go to university and visit my friends. It is very popular in Vietnam because it is fast and convenient. I enjoy riding a motorbike because I can travel easily and save time. However, I always wear a helmet to keep myself safe.",
+    },
+    {
+        "topic": "6. A time you were stuck in a traffic jam",
+        "question": """Describe a time you were stuck in a traffic jam.
+You should say:
+• When and where it happened
+• How long you waited
+• What you did while waiting
+And explain how you felt about this experience.""",
+        "ideal_answer": "Last Monday morning, I was stuck in a big traffic jam when I was going to school. The street was full of cars and motorbikes. I had to wait for about 40 minutes under the sun. I felt very tired, worried and stressed because I thought I would be late for my class. It was a really bad experience for me.",
+    },
+    {
+        "topic": "7. A difficult challenge you faced",
+        "question": """Describe a difficult challenge you faced.
+You should say:
+• What the challenge was
+• When you faced it
+• How you handled/overcame it
+And explain how you felt after overcoming it.""",
+        "ideal_answer": "One difficult challenge I faced was preparing for an important exam last year when I was in high school. I had many subjects to study, so I felt tired and worried about my results. To overcome this challenge, I made a study plan and tried my best every day. In the end, I passed the exam and felt very happy and proud of myself.",
+    },
+    {
+        "topic": "8. An important achievement you made",
+        "question": """Describe an important achievement you have made.
+You should say:
+• What the achievement was
+• When and where you achieved it
+• How you achieved it
+And explain why this achievement was important to you.""",
+        "ideal_answer": "One important achievement I have made was passing my university entrance exam. I achieved this two years ago in Vietnam. To get good results, I studied hard every day, did many exercises and reviewed my lessons carefully. I felt very happy and proud when I received my results. This achievement was important to me because I could enter my dream university and make my family proud.",
+    },
+]
 
-current_q = questions[st.session_state.q_index]
+# ==========================================
+# THANH MENU ĐIỀU HƯỚNG (SIDEBAR)
+# ==========================================
+st.sidebar.title("📌 Menu Luyện Tập")
+mode = st.sidebar.radio(
+    "Chọn phần luyện tập:", ["Speaking Part 1", "Speaking Part 2"]
+)
 
-# Thanh tiến trình
-progress = (st.session_state.q_index + 1) / len(questions)
-st.progress(progress)
-st.write(f"**Câu hỏi {st.session_state.q_index + 1} / {len(questions)}**")
+# ==========================================
+# GIAO DIỆN PART 1
+# ==========================================
+if mode == "Speaking Part 1":
+    st.title("🗣️ IELTS Speaking Part 1 Practice")
 
-# Hiển thị câu hỏi
-st.subheader(f"Question {current_q['id']}:")
-st.info(current_q["question"])
+    if "shuffled_part1" not in st.session_state:
+        p1_copy = PART1_QUESTIONS.copy()
+        random.shuffle(p1_copy)
+        st.session_state.shuffled_part1 = p1_copy
+        st.session_state.p1_index = 0
 
-# Tạo khóa riêng biệt cho mỗi ô nhập để xóa sạch văn bản cũ
-input_key = f"user_ans_{st.session_state.q_index}"
+    current_q = st.session_state.shuffled_part1[st.session_state.p1_index]
+    st.subheader(
+        f"Question {st.session_state.p1_index + 1}/{len(st.session_state.shuffled_part1)}:"
+    )
+    st.info(current_q)
 
-user_input = st.text_area("Nhập câu trả lời của bạn vào đây:", value="", height=120, key=input_key)
+    if "user_answer_p1" not in st.session_state:
+        st.session_state.user_answer_p1 = ""
 
-col1, col2 = st.columns(2)
+    answer_p1 = st.text_area(
+        "Nói/Nhập câu trả lời Part 1 của bạn:",
+        value=st.session_state.user_answer_p1,
+        key="ans_p1",
+    )
 
-# Nút kiểm tra
-if col1.button("🔍 Check Answer (Kiểm tra)", type="primary"):
-    if not user_input.strip():
-        st.warning("⚠️ Hãy nhập câu trả lời của bạn vào ô trên trước khi kiểm tra nhé!")
-    else:
-        st.markdown("---")
-        st.write("### ✍️ Câu bạn vừa nhập:")
-        st.write(f"> *{user_input}*")
-        
-        st.write("### 🛠️ Phân tích & Gợi ý sửa lỗi:")
-        st.error(f"**Các lỗi cần tránh:**\n\n{current_q['corrections']}")
-        st.success(f"**Gợi ý đáp án chuẩn (Ideal Answer):**\n\n{current_q['ideal_ans']}")
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("🔍 Check Answer"):
+            if answer_p1.strip():
+                st.success("Tuyệt vời!")
+                st.write(f"**Câu trả lời của bạn:** {answer_p1}")
+                st.write(
+                    "💡 **Gợi ý:** Áp dụng công thức Answer + Reason + Example."
+                )
+            else:
+                st.warning("Vui lòng nhập/nói câu trả lời trước nhé.")
+    with c2:
+        if st.button("➡️ Next Question"):
+            st.session_state.p1_index = (st.session_state.p1_index + 1) % len(
+                st.session_state.shuffled_part1
+            )
+            st.session_state.user_answer_p1 = ""
+            if st.session_state.p1_index == 0:
+                random.shuffle(st.session_state.shuffled_part1)
+            st.rerun()
 
-# Nút sang câu tiếp theo
-if col2.button("➡️ Next Question (Câu tiếp)"):
-    if st.session_state.q_index < len(questions) - 1:
-        st.session_state.q_index += 1
-        st.rerun()
-    else:
-        st.balloons()
-        st.success("🎉 Bạn đã hoàn thành tất cả 30 câu hỏi Part 1!")
+# ==========================================
+# GIAO DIỆN PART 2
+# ==========================================
+else:
+    st.title("🗣️ IELTS Speaking Part 2 Practice")
+
+    if "shuffled_part2" not in st.session_state:
+        p2_copy = PART2_DATA.copy()
+        random.shuffle(p2_copy)
+        st.session_state.shuffled_part2 = p2_copy
+        st.session_state.p2_index = 0
+
+    current_item = st.session_state.shuffled_part2[st.session_state.p2_index]
+    st.subheader(
+        f"Topic {st.session_state.p2_index + 1}/{len(st.session_state.shuffled_part2)}: {current_item['topic']}"
+    )
+    st.info(current_item["question"])
+
+    if "user_answer_p2" not in st.session_state:
+        st.session_state.user_answer_p2 = ""
+
+    answer_p2 = st.text_area(
+        "Nói/Nhập câu trả lời Part 2 của bạn:",
+        value=st.session_state.user_answer_p2,
+        height=150,
+        key="ans_p2",
+    )
+
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("🔍 Check Answer (Xem Bài Mẫu)"):
+            if answer_p2.strip():
+                st.success("Cùng đối chiếu nhé!")
+                st.write(f"**Bài nói của bạn:**\n{answer_p2}")
+                st.markdown("---")
+                st.write(
+                    f"🌟 **Bài nói mẫu chuẩn:**\n{current_item['ideal_answer']}"
+                )
+            else:
+                st.warning("Vui lòng nhập/nói câu trả lời trước nhé.")
+    with c2:
+        if st.button("➡️ Next Topic"):
+            st.session_state.p2_index = (st.session_state.p2_index + 1) % len(
+                st.session_state.shuffled_part2
+            )
+            st.session_state.user_answer_p2 = ""
+            if st.session_state.p2_index == 0:
+                random.shuffle(st.session_state.shuffled_part2)
+            st.rerun()
